@@ -1,4 +1,4 @@
-import { ConsoleService, MockService } from './providers';
+import { ConsoleService, FileService, MockService } from './providers';
 import { DynamicModule, Module } from '@nestjs/common';
 import { LoggerAsyncConfig, LoggerConfigType } from './config';
 
@@ -62,6 +62,9 @@ export class LoggerModule {
     const loggerModuleConfigs = {
       [LoggerProvider.CONSOLE]: {
         service: ConsoleService,
+      },
+      [LoggerProvider.FILE]: {
+        service: FileService,
       },
     };
 
