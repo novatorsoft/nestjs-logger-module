@@ -1,44 +1,45 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { LoggerService } from '../../logger.service';
+import { LOGGER_CONFIG, LoggerConfig } from '../../config';
 
 @Injectable()
 export class FileService extends LoggerService {
   private readonly logsDir = path.join(process.cwd(), 'logs');
 
-  constructor() {
-    super();
+  constructor(@Inject(LOGGER_CONFIG) loggerConfig: LoggerConfig) {
+    super(loggerConfig);
     this.ensureLogsDirectory();
   }
 
-  debug(message: any, context?: string): void {
+  doDebug(message: any, context?: string): void {
     const logMessage = this.formatLogMessage('DEBUG', message, context);
     this.writeToFile(logMessage);
   }
 
-  log(message: any, context?: string): void {
+  doLog(message: any, context?: string): void {
     const logMessage = this.formatLogMessage('LOG', message, context);
     this.writeToFile(logMessage);
   }
 
-  error(message: any, stack?: string, context?: string): void {
+  doError(message: any, stack?: string, context?: string): void {
     const logMessage = this.formatLogMessage('ERROR', message, context, stack);
     this.writeToFile(logMessage);
   }
 
-  fatal(message: any, stack?: string, context?: string): void {
+  doFatal(message: any, stack?: string, context?: string): void {
     const logMessage = this.formatLogMessage('FATAL', message, context, stack);
     this.writeToFile(logMessage);
   }
 
-  verbose(message: any, context?: string): void {
+  doVerbose(message: any, context?: string): void {
     const logMessage = this.formatLogMessage('VERBOSE', message, context);
     this.writeToFile(logMessage);
   }
 
-  warn(message: any, context?: string): void {
+  doWarn(message: any, context?: string): void {
     const logMessage = this.formatLogMessage('WARN', message, context);
     this.writeToFile(logMessage);
   }
