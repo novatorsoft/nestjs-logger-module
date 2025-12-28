@@ -1,14 +1,19 @@
 {
   "name": "nestjs-logger-module",
   "version": "1.0.0",
-  "description": "",
-  "author": "",
+  "description": "A module for logging in NestJS",
+  "author": "Novatorsoft",
   "private": false,
   "license": "UNLICENSED",
   "main": "dist/index.js",
   "files": [
     "dist",
     "package.json"
+  ],
+  "keywords": [
+    "nestjs",
+    "logger",
+    "module"
   ],
   "scripts": {
     "build": "nest build",
@@ -94,5 +99,13 @@
         "infile": "CHANGELOG.md"
       }
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/novatorsoft/nestjs-logger-module"
+  },
+  "bugs": {
+    "url": "https://github.com/novatorsoft/nestjs-logger-module/issues"
+  },
+  "homepage": "https://github.com/novatorsoft/nestjs-logger-module#readme-module"
 }
