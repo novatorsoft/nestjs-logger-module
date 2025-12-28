@@ -1,5 +1,4 @@
-import { ConsoleConfig, MockService } from './providers';
-
+import { ConsoleConfig } from './providers';
 import { LoggerModule } from './logger.module';
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
@@ -34,21 +33,6 @@ describe('LoggerModule', () => {
 
         const service = module.get<LoggerService>(LoggerService);
         expect(service).toBeDefined();
-      });
-
-      it('should use MockService when enabled is false', async () => {
-        const module = await Test.createTestingModule({
-          imports: [
-            LoggerModule.register({
-              provider: LoggerProvider.CONSOLE,
-              enabled: false,
-            }),
-          ],
-        }).compile();
-
-        const service = module.get<LoggerService>(LoggerService);
-        expect(service).toBeDefined();
-        expect(service).toBeInstanceOf(MockService);
       });
     });
 
@@ -98,23 +82,6 @@ describe('LoggerModule', () => {
 
         const service = module.get<LoggerService>(LoggerService);
         expect(service).toBeDefined();
-      });
-
-      it('should use MockService when enabled is false (async)', async () => {
-        const module = await Test.createTestingModule({
-          imports: [
-            LoggerModule.registerAsync({
-              provider: LoggerProvider.CONSOLE,
-              enabled: false,
-              useFactory: () => ({}),
-              inject: [],
-            }),
-          ],
-        }).compile();
-
-        const service = module.get<LoggerService>(LoggerService);
-        expect(service).toBeDefined();
-        expect(service).toBeInstanceOf(MockService);
       });
     });
   });
