@@ -99,6 +99,13 @@ describe('ConsoleService', () => {
       expect(loggerSpy.fatal).toHaveBeenCalled();
     });
 
+    it('should fatal a message with stack', () => {
+      const message = 'Test fatal message';
+      const stack = 'Fatal stack trace';
+      service.fatal(message, stack);
+      expect(loggerSpy.fatal).toHaveBeenCalledWith(message, stack, undefined);
+    });
+
     it('should fatal a message with stack and context', () => {
       const message = 'Test fatal message';
       const stack = 'Fatal stack trace';
