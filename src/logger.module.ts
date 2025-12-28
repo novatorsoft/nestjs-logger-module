@@ -1,7 +1,7 @@
+import { ConsoleService, FileService } from './providers';
 import { DynamicModule, Module } from '@nestjs/common';
 import { LOGGER_CONFIG, LoggerAsyncConfig, LoggerConfigType } from './config';
 
-import { ConsoleService } from './providers';
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
 
@@ -57,6 +57,9 @@ export class LoggerModule {
     const loggerModuleConfigs = {
       [LoggerProvider.CONSOLE]: {
         service: ConsoleService,
+      },
+      [LoggerProvider.FILE]: {
+        service: FileService,
       },
     };
 
