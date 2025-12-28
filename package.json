@@ -1,9 +1,9 @@
 {
   "name": "nestjs-logger-module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "",
   "author": "",
-  "private": true,
+  "private": false,
   "license": "UNLICENSED",
   "main": "dist/index.js",
   "files": [
