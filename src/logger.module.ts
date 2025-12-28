@@ -68,7 +68,7 @@ export class LoggerModule {
     const loggerModuleConfig = loggerModuleConfigs[provider];
     if (!loggerModuleConfig) throw new Error('Invalid logger provider');
 
-    if (!enabled)
+    if (typeof enabled === 'boolean' && !enabled)
       return {
         service: MockService,
       };
