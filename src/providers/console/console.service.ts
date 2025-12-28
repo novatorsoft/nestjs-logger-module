@@ -4,32 +4,32 @@ import { LoggerService } from '../../logger.service';
 
 @Injectable()
 export class ConsoleService extends LoggerService {
-  debug(message: any, context?: string): void {
+  doDebug(message: any, context?: string): void {
     const logger = this.getLogger(context);
     logger.debug(message);
   }
 
-  log(message: any, context?: string): void {
+  doLog(message: any, context?: string): void {
     const logger = this.getLogger(context);
     logger.log(message);
   }
 
-  error(message: any, stack?: string, context?: string): void {
+  doError(message: any, stack?: string, context?: string): void {
     const logger = this.getLogger(!context && stack ? stack : context);
     logger.error(message, stack, context);
   }
 
-  fatal(message: any, stack?: string, context?: string): void {
+  doFatal(message: any, stack?: string, context?: string): void {
     const logger = this.getLogger(!context && stack ? stack : context);
     logger.fatal(message, stack, context);
   }
 
-  verbose(message: any, context?: string): void {
+  doVerbose(message: any, context?: string): void {
     const logger = this.getLogger(context);
     logger.verbose(message);
   }
 
-  warn(message: any, context?: string): void {
+  doWarn(message: any, context?: string): void {
     const logger = this.getLogger(context);
     logger.warn(message);
   }
