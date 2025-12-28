@@ -1,4 +1,5 @@
-import { ConsoleConfig } from './providers';
+import { ConsoleConfig, MockService } from './providers';
+
 import { LoggerModule } from './logger.module';
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
@@ -30,6 +31,20 @@ describe('LoggerModule', () => {
 
         const service = module.get<LoggerService>(LoggerService);
         expect(service).toBeDefined();
+      });
+
+      it('should use MockService when enabled is false', async () => {
+        const loggerConfig = new ConsoleConfig();
+        loggerConfig.provider = LoggerProvider.CONSOLE;
+        loggerConfig.enabled = false;
+
+        const module = await Test.createTestingModule({
+          imports: [LoggerModule.register(loggerConfig)],
+        }).compile();
+
+        const service = module.get<LoggerService>(LoggerService);
+        expect(service).toBeDefined();
+        expect(service).toBeInstanceOf(MockService);
       });
     });
 
@@ -88,6 +103,27 @@ describe('LoggerModule', () => {
 
         const service = module.get<LoggerService>(LoggerService);
         expect(service).toBeDefined();
+      });
+
+      it('should use MockService when enabled is false (async)', async () => {
+        const loggerConfig = new ConsoleConfig();
+        loggerConfig.provider = LoggerProvider.CONSOLE;
+        loggerConfig.enabled = false;
+
+        const module = await Test.createTestingModule({
+          imports: [
+            LoggerModule.registerAsync({
+              provider: loggerConfig.provider,
+              enabled: false,
+              useFactory: () => loggerConfig,
+              inject: [],
+            }),
+          ],
+        }).compile();
+
+        const service = module.get<LoggerService>(LoggerService);
+        expect(service).toBeDefined();
+        expect(service).toBeInstanceOf(MockService);
       });
     });
   });

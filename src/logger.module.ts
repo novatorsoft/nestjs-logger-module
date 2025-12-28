@@ -1,7 +1,7 @@
+import { ConsoleService, MockService } from './providers';
 import { DynamicModule, Module } from '@nestjs/common';
 import { LoggerAsyncConfig, LoggerConfigType } from './config';
 
-import { ConsoleService } from './providers';
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
 
@@ -10,6 +10,7 @@ export class LoggerModule {
   static register(config: LoggerConfigType): DynamicModule {
     const loggerModuleConfig = LoggerModule.getLoggerProviderModuleConfig(
       config?.provider,
+      config?.enabled,
     );
     return {
       module: LoggerModule,
@@ -32,6 +33,7 @@ export class LoggerModule {
   static registerAsync(config: LoggerAsyncConfig): DynamicModule {
     const loggerModuleConfig = LoggerModule.getLoggerProviderModuleConfig(
       config?.provider,
+      config?.enabled,
     );
     return {
       module: LoggerModule,
@@ -53,7 +55,10 @@ export class LoggerModule {
     };
   }
 
-  private static getLoggerProviderModuleConfig(provider: LoggerProvider) {
+  private static getLoggerProviderModuleConfig(
+    provider: LoggerProvider,
+    enabled?: boolean,
+  ) {
     const loggerModuleConfigs = {
       [LoggerProvider.CONSOLE]: {
         service: ConsoleService,
@@ -62,6 +67,11 @@ export class LoggerModule {
 
     const loggerModuleConfig = loggerModuleConfigs[provider];
     if (!loggerModuleConfig) throw new Error('Invalid logger provider');
+
+    if (!enabled)
+      return {
+        service: MockService,
+      };
 
     return loggerModuleConfig;
   }

@@ -7,7 +7,9 @@ export type LoggerConfigType = ConsoleConfig;
 
 export type LoggerAsyncConfig = Pick<ModuleMetadata, 'imports'> &
   Pick<
-    FactoryProvider<Omit<LoggerConfigType, 'provider' | 'isGlobal'>>,
+    FactoryProvider<
+      Omit<LoggerConfigType, 'provider' | 'isGlobal' | 'enabled'>
+    >,
     'useFactory' | 'inject'
   > &
   LoggerConfig;
