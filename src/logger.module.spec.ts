@@ -23,7 +23,6 @@ describe('LoggerModule', () => {
       it('Logger Service should be defined (global defined)', async () => {
         const loggerConfig = new ConsoleConfig();
         loggerConfig.provider = LoggerProvider.CONSOLE;
-        loggerConfig.isGlobal = true;
 
         const module = await Test.createTestingModule({
           imports: [LoggerModule.register(loggerConfig)],
