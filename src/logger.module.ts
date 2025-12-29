@@ -1,9 +1,16 @@
-import { ConsoleService, FileService } from './providers';
+import {
+  ConsoleService,
+  FileService,
+  MongoConfig,
+  MongoService,
+} from './providers';
 import { DynamicModule, Module } from '@nestjs/common';
 import { LOGGER_CONFIG, LoggerAsyncConfig, LoggerConfigType } from './config';
+import { Log, LogSchema } from './providers/mongo/log.scheme';
 
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({})
 export class LoggerModule {
@@ -11,19 +18,17 @@ export class LoggerModule {
     const loggerModuleConfig = LoggerModule.getLoggerProviderModuleConfig(
       config?.provider,
     );
+
     return {
       module: LoggerModule,
       global: config?.isGlobal ?? false,
+      imports: loggerModuleConfig.imports,
       providers: [
-        loggerModuleConfig.service,
         {
           provide: LOGGER_CONFIG,
           useValue: config,
         },
-        {
-          provide: LoggerService,
-          useClass: loggerModuleConfig.service,
-        },
+        ...loggerModuleConfig.provider,
       ],
       exports: [LoggerService],
     };
@@ -36,18 +41,14 @@ export class LoggerModule {
     return {
       module: LoggerModule,
       global: config?.isGlobal ?? false,
-      imports: config.imports,
+      imports: [...(config.imports ?? []), ...loggerModuleConfig.imports],
       providers: [
-        loggerModuleConfig.service,
         {
           provide: LOGGER_CONFIG,
           useFactory: config.useFactory,
           inject: config.inject,
         },
-        {
-          provide: LoggerService,
-          useClass: loggerModuleConfig.service,
-        },
+        ...loggerModuleConfig.provider,
       ],
       exports: [LoggerService],
     };
@@ -55,17 +56,63 @@ export class LoggerModule {
 
   private static getLoggerProviderModuleConfig(provider: LoggerProvider) {
     const loggerModuleConfigs = {
-      [LoggerProvider.CONSOLE]: {
-        service: ConsoleService,
-      },
-      [LoggerProvider.FILE]: {
-        service: FileService,
-      },
+      [LoggerProvider.CONSOLE]: () =>
+        LoggerModule.getConsoleProviderModuleConfig(),
+      [LoggerProvider.FILE]: () => LoggerModule.getFileProviderModuleConfig(),
+      [LoggerProvider.MONGODB]: () =>
+        LoggerModule.getConsoleProviderModuleConfig(),
     };
 
     const loggerModuleConfig = loggerModuleConfigs[provider];
     if (!loggerModuleConfig) throw new Error('Invalid logger provider');
 
-    return loggerModuleConfig;
+    return loggerModuleConfig();
+  }
+
+  private static getMongodbProviderModuleConfig() {
+    return {
+      provider: [
+        {
+          provide: LoggerService,
+          useClass: MongoService,
+        },
+      ],
+      imports: [
+        // MongooseModule.forRootAsync({
+        //   useFactory: (config: MongoConfig) => {
+        //     console.log({ config });
+        //     return {
+        //       uri: config.uri,
+        //     };
+        //   },
+        //   inject: [LOGGER_CONFIG],
+        // }),
+        // MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
+      ],
+    };
+  }
+
+  private static getFileProviderModuleConfig() {
+    return {
+      imports: [],
+      provider: [
+        {
+          provide: LoggerService,
+          useClass: FileService,
+        },
+      ],
+    };
+  }
+
+  private static getConsoleProviderModuleConfig() {
+    return {
+      imports: [],
+      provider: [
+        {
+          provide: LoggerService,
+          useClass: ConsoleService,
+        },
+      ],
+    };
   }
 }
