@@ -17,19 +17,17 @@ export class LoggerModule {
   static register(config: LoggerConfigType): DynamicModule {
     const loggerModuleConfig = LoggerModule.getLoggerProviderModuleConfig(
       config?.provider,
+      config,
     );
 
     return {
       module: LoggerModule,
       global: config?.isGlobal ?? false,
-      imports: loggerModuleConfig.imports,
-      providers: [
-        {
-          provide: LOGGER_CONFIG,
-          useValue: config,
-        },
-        ...loggerModuleConfig.provider,
+      imports: [
+        ...loggerModuleConfig.imports,
+        LoggerModule.getLoggerConfigModule(config),
       ],
+      providers: loggerModuleConfig.provider,
       exports: [LoggerService],
     };
   }
@@ -37,30 +35,32 @@ export class LoggerModule {
   static registerAsync(config: LoggerAsyncConfig): DynamicModule {
     const loggerModuleConfig = LoggerModule.getLoggerProviderModuleConfig(
       config?.provider,
+      config,
     );
+
     return {
       module: LoggerModule,
       global: config?.isGlobal ?? false,
-      imports: [...(config.imports ?? []), ...loggerModuleConfig.imports],
-      providers: [
-        {
-          provide: LOGGER_CONFIG,
-          useFactory: config.useFactory,
-          inject: config.inject,
-        },
-        ...loggerModuleConfig.provider,
+      imports: [
+        ...(config.imports ?? []),
+        ...loggerModuleConfig.imports,
+        LoggerModule.getLoggerConfigModule(config),
       ],
+      providers: loggerModuleConfig.provider,
       exports: [LoggerService],
     };
   }
 
-  private static getLoggerProviderModuleConfig(provider: LoggerProvider) {
+  private static getLoggerProviderModuleConfig(
+    provider: LoggerProvider,
+    config: LoggerConfigType | LoggerAsyncConfig,
+  ) {
     const loggerModuleConfigs = {
       [LoggerProvider.CONSOLE]: () =>
         LoggerModule.getConsoleProviderModuleConfig(),
       [LoggerProvider.FILE]: () => LoggerModule.getFileProviderModuleConfig(),
       [LoggerProvider.MONGODB]: () =>
-        LoggerModule.getConsoleProviderModuleConfig(),
+        LoggerModule.getMongodbProviderModuleConfig(config),
     };
 
     const loggerModuleConfig = loggerModuleConfigs[provider];
@@ -69,7 +69,10 @@ export class LoggerModule {
     return loggerModuleConfig();
   }
 
-  private static getMongodbProviderModuleConfig() {
+  private static getMongodbProviderModuleConfig(
+    config: LoggerConfigType | LoggerAsyncConfig,
+  ) {
+    const LoggerConfigModule = LoggerModule.getLoggerConfigModule(config);
     return {
       provider: [
         {
@@ -78,16 +81,17 @@ export class LoggerModule {
         },
       ],
       imports: [
-        // MongooseModule.forRootAsync({
-        //   useFactory: (config: MongoConfig) => {
-        //     console.log({ config });
-        //     return {
-        //       uri: config.uri,
-        //     };
-        //   },
-        //   inject: [LOGGER_CONFIG],
-        // }),
-        // MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
+        LoggerConfigModule,
+        MongooseModule.forRootAsync({
+          imports: [LoggerConfigModule],
+          useFactory: (loggerConfig: MongoConfig) => {
+            return {
+              uri: loggerConfig.uri,
+            };
+          },
+          inject: [LOGGER_CONFIG],
+        }),
+        MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
       ],
     };
   }
@@ -113,6 +117,28 @@ export class LoggerModule {
           useClass: ConsoleService,
         },
       ],
+    };
+  }
+
+  private static getLoggerConfigModule(
+    config: LoggerConfigType | LoggerAsyncConfig,
+  ) {
+    return {
+      module: class LoggerConfigModule {},
+      global: true,
+      providers: [
+        config && 'useFactory' in config
+          ? {
+              provide: LOGGER_CONFIG,
+              useFactory: config.useFactory,
+              inject: config.inject ?? [],
+            }
+          : {
+              provide: LOGGER_CONFIG,
+              useValue: config,
+            },
+      ],
+      exports: [LOGGER_CONFIG],
     };
   }
 }

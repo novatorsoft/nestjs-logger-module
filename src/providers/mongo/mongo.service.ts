@@ -10,7 +10,7 @@ import { Model } from 'mongoose';
 export class MongoService extends LoggerService {
   constructor(
     @Inject(LOGGER_CONFIG) private readonly mongoConfig: MongoConfig,
-    // @InjectModel(Log.name) private readonly logModel: Model<Log>,
+    @InjectModel(Log.name) private readonly logModel: Model<Log>,
   ) {
     super(mongoConfig);
   }
@@ -54,7 +54,7 @@ export class MongoService extends LoggerService {
         ...(stack && { stack }),
       };
 
-      // await this.logModel.insertOne(logEntry);
+      await this.logModel.insertOne(logEntry);
     } catch (error) {
       console.error(error);
     }
