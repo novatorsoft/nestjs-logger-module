@@ -8,6 +8,7 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { LOGGER_CONFIG, LoggerAsyncConfig, LoggerConfigType } from './config';
 import { Log, LogSchema } from './providers/mongo/log.scheme';
 
+import { LoggerConfigModule } from './logger-config.module';
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -25,7 +26,7 @@ export class LoggerModule {
       global: config?.isGlobal ?? false,
       imports: [
         ...loggerModuleConfig.imports,
-        LoggerModule.getLoggerConfigModule(config),
+        LoggerConfigModule.register(config),
       ],
       providers: loggerModuleConfig.provider,
       exports: [LoggerService],
@@ -44,7 +45,7 @@ export class LoggerModule {
       imports: [
         ...(config.imports ?? []),
         ...loggerModuleConfig.imports,
-        LoggerModule.getLoggerConfigModule(config),
+        LoggerConfigModule.register(config),
       ],
       providers: loggerModuleConfig.provider,
       exports: [LoggerService],
@@ -72,7 +73,7 @@ export class LoggerModule {
   private static getMongodbProviderModuleConfig(
     config: LoggerConfigType | LoggerAsyncConfig,
   ) {
-    const LoggerConfigModule = LoggerModule.getLoggerConfigModule(config);
+    const loggerConfigModule = LoggerConfigModule.register(config);
     return {
       provider: [
         {
@@ -81,9 +82,9 @@ export class LoggerModule {
         },
       ],
       imports: [
-        LoggerConfigModule,
+        loggerConfigModule,
         MongooseModule.forRootAsync({
-          imports: [LoggerConfigModule],
+          imports: [loggerConfigModule],
           useFactory: (loggerConfig: MongoConfig) => {
             return {
               uri: loggerConfig.uri,
@@ -117,28 +118,6 @@ export class LoggerModule {
           useClass: ConsoleService,
         },
       ],
-    };
-  }
-
-  private static getLoggerConfigModule(
-    config: LoggerConfigType | LoggerAsyncConfig,
-  ) {
-    return {
-      module: class LoggerConfigModule {},
-      global: true,
-      providers: [
-        config && 'useFactory' in config
-          ? {
-              provide: LOGGER_CONFIG,
-              useFactory: config.useFactory,
-              inject: config.inject ?? [],
-            }
-          : {
-              provide: LOGGER_CONFIG,
-              useValue: config,
-            },
-      ],
-      exports: [LOGGER_CONFIG],
     };
   }
 }
