@@ -3,9 +3,9 @@ import * as path from 'path';
 
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { FileConfigFixture } from '../../../test/fixtures';
 import { FileService } from './file.service';
 import { LOGGER_CONFIG } from '../../config';
-import { LoggerConfigFixture } from '../../../test/fixtures';
 import { MockFactory } from 'mockingbird';
 
 jest.mock('fs', () => ({
@@ -26,7 +26,7 @@ describe('FileService', () => {
     (fsMock.mkdirSync as jest.Mock).mockReset();
     (fsMock.appendFileSync as jest.Mock).mockReset();
 
-    const loggerConfig = MockFactory(LoggerConfigFixture).one();
+    const loggerConfig = MockFactory(FileConfigFixture).one();
 
     (fsMock.existsSync as jest.Mock).mockReturnValue(false);
 
@@ -64,7 +64,7 @@ describe('FileService', () => {
       (fsMock.mkdirSync as jest.Mock).mockReset();
       (fsMock.existsSync as jest.Mock).mockReturnValue(true);
 
-      const loggerConfig = MockFactory(LoggerConfigFixture).one();
+      const loggerConfig = MockFactory(FileConfigFixture).one();
       const module: TestingModule = await Test.createTestingModule({
         providers: [
           FileService,

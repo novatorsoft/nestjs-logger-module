@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
+import { ConsoleConfigFixture } from '../../../test/fixtures';
 import { ConsoleService } from './console.service';
 import { LOGGER_CONFIG } from '../../config';
 import { Logger } from '@nestjs/common';
-import { LoggerConfigFixture } from '../../../test/fixtures';
 import { MockFactory } from 'mockingbird';
 
 describe('ConsoleService', () => {
@@ -18,7 +18,7 @@ describe('ConsoleService', () => {
   };
 
   beforeEach(async () => {
-    const loggerConfig = MockFactory(LoggerConfigFixture).one();
+    const loggerConfig = MockFactory(ConsoleConfigFixture).one();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ConsoleService,
