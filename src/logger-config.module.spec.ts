@@ -61,4 +61,26 @@ describe('LoggerConfigModule', () => {
     });
     expect(dynamicModule.exports).toContain(LOGGER_CONFIG);
   });
+
+  it('should be usable in a testing module with useFactory provider(inject is not provided)', () => {
+    const loggerConfig = MockFactory(LoggerConfigFixture).one();
+    const asyncConfig = {
+      provider: loggerConfig.provider,
+      useFactory: () => loggerConfig,
+    };
+
+    const dynamicModule = LoggerConfigModule.register(asyncConfig);
+
+    expect(dynamicModule).toBeDefined();
+    expect(dynamicModule.module).toBe(LoggerConfigModule);
+    expect(dynamicModule.global).toBe(true);
+    expect(dynamicModule.providers).toBeDefined();
+    expect(dynamicModule.providers?.length).toBe(1);
+    expect(dynamicModule.providers?.[0]).toEqual({
+      provide: LOGGER_CONFIG,
+      useFactory: asyncConfig.useFactory,
+      inject: [],
+    });
+    expect(dynamicModule.exports).toContain(LOGGER_CONFIG);
+  });
 });
