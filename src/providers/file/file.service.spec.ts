@@ -1,5 +1,5 @@
-import * as fs from 'fs';
-import * as path from 'path';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -8,7 +8,7 @@ import { FileService } from './file.service';
 import { LOGGER_CONFIG } from '../../config';
 import { MockFactory } from 'mockingbird';
 
-jest.mock('fs', () => ({
+jest.mock('node:fs', () => ({
   existsSync: jest.fn(),
   mkdirSync: jest.fn(),
   appendFileSync: jest.fn(),
