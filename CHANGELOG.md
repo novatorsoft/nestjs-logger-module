@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.1.0...v1.2.0) (2026-01-02)
+
+### Features
+
+* create http logging interceptor ([8a2be92](https://github.com/novatorsoft/nestjs-logger-module/commit/8a2be92a0d1e6ec3dd74b95f93ac8a691b703e5c))
+* create mongodb provider ([3906d09](https://github.com/novatorsoft/nestjs-logger-module/commit/3906d09f753618cc706528ed826d489e12f5616d))
+* implement LoggerConfigModule with dynamic registration and add unit tests ([dcb2509](https://github.com/novatorsoft/nestjs-logger-module/commit/dcb2509d1eb8519f84fb6efc874a0d87c0d9a0c6))
+
 ## [1.1.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.0.0...v1.1.0) (2025-12-29)
 
 ### Features
