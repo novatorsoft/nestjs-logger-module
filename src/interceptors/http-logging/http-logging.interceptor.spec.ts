@@ -98,6 +98,7 @@ describe('HttpLoggingInterceptor', () => {
                 responseBody: mockResponse.body,
                 method: mockRequest.method,
                 url: mockRequest.url,
+                requestType: 'http-request',
               },
               'TestController',
             );
@@ -243,6 +244,7 @@ describe('HttpLoggingInterceptor', () => {
                 requestBody: mockRequest.body,
                 requestHeaders: mockRequest.headers,
                 statusCode: HttpStatus.BAD_REQUEST,
+                requestType: 'http-request',
                 responseBody: { message: 'Bad Request' },
               },
               httpException.stack,
@@ -272,6 +274,7 @@ describe('HttpLoggingInterceptor', () => {
                 requestHeaders: mockRequest.headers,
                 statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
                 responseBody: {},
+                requestType: 'http-request',
               },
               'Error stack trace',
               'TestController',

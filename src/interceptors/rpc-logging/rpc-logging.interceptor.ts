@@ -23,6 +23,7 @@ export class RpcLoggingInterceptor implements NestInterceptor {
     const message = {
       pattern: rpcData.pattern,
       requestData: rpcData?.data ?? null,
+      requestType: 'rpc-request',
     };
 
     return next.handle().pipe(

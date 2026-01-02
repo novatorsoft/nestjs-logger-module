@@ -90,6 +90,7 @@ describe('RpcLoggingInterceptor', () => {
                 pattern: mockRpcData.pattern,
                 requestData: mockRpcData.data,
                 responseData: mockResponse.data,
+                requestType: 'rpc-request',
               },
               'TestController',
             );
@@ -210,6 +211,7 @@ describe('RpcLoggingInterceptor', () => {
                 requestData: mockRpcData.data,
                 error: httpException.message,
                 responseData: null,
+                requestType: 'rpc-request',
               },
               httpException.stack,
               'TestController',
@@ -236,6 +238,7 @@ describe('RpcLoggingInterceptor', () => {
                 requestData: mockRpcData.data,
                 error: error.message,
                 responseData: null,
+                requestType: 'rpc-request',
               },
               'Error stack trace',
               'TestController',
