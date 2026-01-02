@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.3.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.1.0...v1.2.0) (2026-01-02)
+
+### Features
+
+* add requestType field to logging interceptors for better request identification ([d8c4b44](https://github.com/novatorsoft/nestjs-logger-module/commit/d8c4b443ab3f439092c88a6dd297951129486095))
+* create rpc logging interceptor ([879271b](https://github.com/novatorsoft/nestjs-logger-module/commit/879271bd68fc4a4e426a9fcef82f677047ab3481))
+* enhance HttpLoggingInterceptor to skip logging for non-http contexts and add corresponding unit test ([28a858a](https://github.com/novatorsoft/nestjs-logger-module/commit/28a858a0b7ddace226e8885f1e1b8a170ffa471e))
+## [1.2.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.1.0...v1.2.0) (2026-01-02)
+
+### Features
+
+* create http logging interceptor ([8a2be92](https://github.com/novatorsoft/nestjs-logger-module/commit/8a2be92a0d1e6ec3dd74b95f93ac8a691b703e5c))
+* create mongodb provider ([3906d09](https://github.com/novatorsoft/nestjs-logger-module/commit/3906d09f753618cc706528ed826d489e12f5616d))
+* implement LoggerConfigModule with dynamic registration and add unit tests ([dcb2509](https://github.com/novatorsoft/nestjs-logger-module/commit/dcb2509d1eb8519f84fb6efc874a0d87c0d9a0c6))
+
 ## [1.3.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.2.0...v1.3.0) (2026-01-02)
 
 ### Features
