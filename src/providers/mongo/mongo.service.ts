@@ -50,6 +50,9 @@ export class MongoService extends LoggerService {
         timestamp: new Date(),
         level,
         message: message as unknown,
+        ...(this.mongoConfig.serviceName && {
+          serviceName: this.mongoConfig.serviceName,
+        }),
         ...(context && { context }),
         ...(stack && { stack }),
       };

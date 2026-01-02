@@ -109,6 +109,53 @@ describe('FileService', () => {
     });
   }
 
+  describe('serviceName', () => {
+    it('should not include serviceName when serviceName is undefined', () => {
+      service.log('Test log message');
+
+      const [, content] = (fsMock.appendFileSync as jest.Mock).mock
+        .calls[0] as [string, string, string];
+      const parsed = JSON.parse(String(content).trim()) as {
+        timestamp: string;
+        level: string;
+        message: string;
+        context?: string;
+        stack?: string;
+        serviceName?: string;
+      };
+      expect(parsed.serviceName).toBeUndefined();
+    });
+
+    it('should include serviceName when serviceName is defined', async () => {
+      const loggerConfig = MockFactory(FileConfigFixture).one();
+      loggerConfig.serviceName = 'TestService';
+
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          FileService,
+          { provide: LOGGER_CONFIG, useValue: loggerConfig },
+        ],
+      }).compile();
+
+      const svc = module.get<FileService>(FileService);
+      svc.log('Test log message');
+
+      expectAppendCalledWithLevel('LOG');
+
+      const [, content] = (fsMock.appendFileSync as jest.Mock).mock
+        .calls[0] as [string, string, string];
+      const parsed = JSON.parse(String(content).trim()) as {
+        timestamp: string;
+        level: string;
+        message: string;
+        context?: string;
+        stack?: string;
+        serviceName?: string;
+      };
+      expect(parsed.serviceName).toBe(loggerConfig.serviceName);
+    });
+  });
+
   describe('log', () => {
     it('should write LOG entry to file', () => {
       service.log('Test log message');

@@ -41,6 +41,46 @@ describe('MongoService', () => {
     expect(service).toBeDefined();
   });
 
+  describe('serviceName', () => {
+    it('should not include serviceName when serviceName is undefined', () => {
+      service.log('Test log message');
+
+      expect(mockInsertOne).toHaveBeenCalledWith(
+        expect.not.objectContaining({
+          serviceName: expect.anything() as string,
+        }),
+      );
+    });
+
+    it('should include serviceName when serviceName is defined', () => {
+      const loggerConfig = MockFactory(MongoConfigFixture).one();
+      loggerConfig.serviceName = 'TestService';
+
+      const modulePromise = Test.createTestingModule({
+        providers: [
+          MongoService,
+          { provide: LOGGER_CONFIG, useValue: loggerConfig },
+          {
+            provide: getModelToken(Log.name),
+            useValue: { insertOne: mockInsertOne },
+          },
+        ],
+      }).compile();
+
+      return modulePromise.then((module) => {
+        const svc = module.get<MongoService>(MongoService);
+        svc.log('Test log message');
+
+        expect(mockInsertOne).toHaveBeenCalledWith(
+          expect.objectContaining({
+            serviceName: loggerConfig.serviceName,
+            message: 'Test log message',
+          }),
+        );
+      });
+    });
+  });
+
   describe('Log Levels', () => {
     it('doDebug: should insert a log with level DEBUG', () => {
       const message = 'debug message';

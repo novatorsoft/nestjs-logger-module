@@ -4,4 +4,5 @@ export class LoggerConfig {
   provider: LoggerProvider;
   isGlobal?: boolean;
   enabled?: boolean;
+  serviceName?: string;
 }

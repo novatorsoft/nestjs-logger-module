@@ -3,14 +3,15 @@ import * as path from 'node:path';
 
 import { Inject, Injectable } from '@nestjs/common';
 import { LoggerService } from '../../logger.service';
-import { LOGGER_CONFIG, LoggerConfig } from '../../config';
+import { LOGGER_CONFIG } from '../../config';
+import { FileConfig } from './file.config';
 
 @Injectable()
 export class FileService extends LoggerService {
   private readonly logsDir = path.join(process.cwd(), 'logs');
 
-  constructor(@Inject(LOGGER_CONFIG) loggerConfig: LoggerConfig) {
-    super(loggerConfig);
+  constructor(@Inject(LOGGER_CONFIG) private readonly fileConfig: FileConfig) {
+    super(fileConfig);
     this.ensureLogsDirectory();
   }
 
@@ -73,6 +74,9 @@ export class FileService extends LoggerService {
       timestamp,
       level,
       message: message as unknown,
+      ...(this.fileConfig.serviceName && {
+        serviceName: this.fileConfig.serviceName,
+      }),
       ...(context && { context }),
       ...(stack && { stack }),
     };
