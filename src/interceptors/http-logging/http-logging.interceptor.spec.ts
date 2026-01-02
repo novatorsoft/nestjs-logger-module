@@ -28,6 +28,7 @@ describe('HttpLoggingInterceptor', () => {
     response: any,
   ): jest.Mocked<ExecutionContext> => {
     return {
+      getType: jest.fn().mockReturnValue('http'),
       switchToHttp: jest.fn().mockReturnValue({
         getRequest: jest.fn().mockReturnValue(request),
         getResponse: jest.fn().mockReturnValue(response),
@@ -76,6 +77,13 @@ describe('HttpLoggingInterceptor', () => {
 
   describe('intercept', () => {
     describe('successful requests', () => {
+      it('should not log if context type is not http', () => {
+        executionContext.getType.mockReturnValue('tcp');
+        callHandler.handle.mockReturnValue(of(mockResponse.body));
+        interceptor.intercept(executionContext, callHandler).subscribe();
+        expect(jest.spyOn(loggerService, 'log')).not.toHaveBeenCalled();
+      });
+
       it('should log successful request with all data', (done) => {
         callHandler.handle.mockReturnValue(of(mockResponse.body));
 
