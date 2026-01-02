@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.3.0...v1.4.0) (2026-01-02)
+
+### Features
+
+* add serviceName support to logging configuration and update related tests ([74acc3d](https://github.com/novatorsoft/nestjs-logger-module/commit/74acc3de93f75bc95d2eabddf32febe8fe5ef758))
+
 ## [1.3.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.1.0...v1.2.0) (2026-01-02)
 
 ### Features
