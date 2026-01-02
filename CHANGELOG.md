@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.2.0...v1.3.0) (2026-01-02)
+
+### Features
+
+* create rpc logging interceptor ([879271b](https://github.com/novatorsoft/nestjs-logger-module/commit/879271bd68fc4a4e426a9fcef82f677047ab3481))
+* enhance HttpLoggingInterceptor to skip logging for non-http contexts and add corresponding unit test ([28a858a](https://github.com/novatorsoft/nestjs-logger-module/commit/28a858a0b7ddace226e8885f1e1b8a170ffa471e))
+
 ## [1.2.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.1.0...v1.2.0) (2026-01-02)
 
 ### Features
