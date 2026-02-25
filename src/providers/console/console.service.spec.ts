@@ -151,4 +151,12 @@ describe('ConsoleService', () => {
       expect(loggerSpy.warn).toHaveBeenCalledWith(message);
     });
   });
+
+  describe('doHandleOldLogCleanupAsync', () => {
+    it('should resolve without doing anything', async () => {
+      await expect(
+        service['doHandleOldLogCleanupAsync'](),
+      ).resolves.toBeUndefined();
+    });
+  });
 });

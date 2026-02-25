@@ -5,4 +5,5 @@ export class LoggerConfig {
   isGlobal?: boolean;
   enabled?: boolean;
   serviceName?: string;
+  retentionDays?: number;
 }

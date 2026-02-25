@@ -45,6 +45,30 @@ export class FileService extends LoggerService {
     this.writeToFile(logMessage);
   }
 
+  protected doHandleOldLogCleanupAsync(): Promise<void> {
+    try {
+      const cutoffDate = this.getCutoffDate();
+      const files = fs.readdirSync(this.logsDir);
+      const logFilePattern = /^log-(\d{4})-(\d{2})-(\d{2})\.log$/;
+
+      for (const file of files) {
+        const match = logFilePattern.exec(file);
+        if (!match) continue;
+
+        const fileDate = new Date(
+          Number(match[1]),
+          Number(match[2]) - 1,
+          Number(match[3]),
+        );
+
+        if (fileDate < cutoffDate) fs.unlinkSync(path.join(this.logsDir, file));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    return Promise.resolve();
+  }
+
   private ensureLogsDirectory(): void {
     if (!fs.existsSync(this.logsDir)) {
       fs.mkdirSync(this.logsDir, { recursive: true });

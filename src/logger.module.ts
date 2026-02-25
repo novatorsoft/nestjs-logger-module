@@ -12,6 +12,7 @@ import { LoggerConfigModule } from './logger-config.module';
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({})
 export class LoggerModule {
@@ -26,6 +27,7 @@ export class LoggerModule {
       global: config?.isGlobal ?? false,
       imports: [
         ...loggerModuleConfig.imports,
+        ScheduleModule.forRoot(),
         LoggerConfigModule.register(config),
       ],
       providers: loggerModuleConfig.provider,
@@ -45,6 +47,7 @@ export class LoggerModule {
       imports: [
         ...(config.imports ?? []),
         ...loggerModuleConfig.imports,
+        ScheduleModule.forRoot(),
         LoggerConfigModule.register(config),
       ],
       providers: loggerModuleConfig.provider,

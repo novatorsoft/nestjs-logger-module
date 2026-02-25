@@ -186,4 +186,72 @@ describe('MongoService', () => {
       consoleSpy.mockRestore();
     });
   });
+
+  describe('doHandleOldLogCleanupAsync', () => {
+    let cleanupService: MongoService;
+    const mockDeleteMany = jest.fn();
+    const retentionDays = 7;
+
+    beforeEach(async () => {
+      const mongoConfig = MockFactory(MongoConfigFixture).one();
+      mongoConfig.retentionDays = retentionDays;
+
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          MongoService,
+          {
+            provide: LOGGER_CONFIG,
+            useValue: mongoConfig,
+          },
+          {
+            provide: getModelToken(Log.name),
+            useValue: {
+              insertOne: mockInsertOne,
+              deleteMany: mockDeleteMany,
+            },
+          },
+        ],
+      }).compile();
+
+      cleanupService = module.get<MongoService>(MongoService);
+    });
+
+    afterEach(() => {
+      mockDeleteMany.mockClear();
+    });
+
+    it('should call deleteMany with cutoff date', async () => {
+      const now = Date.now();
+      jest.spyOn(Date, 'now').mockReturnValue(now);
+      mockDeleteMany.mockResolvedValueOnce({ deletedCount: 5 });
+
+      await cleanupService.doHandleOldLogCleanupAsync();
+
+      const expectedCutoffDate = new Date(
+        now - retentionDays * 24 * 60 * 60 * 1000,
+      );
+
+      expect(mockDeleteMany).toHaveBeenCalledWith({
+        timestamp: { $lt: expectedCutoffDate },
+      });
+
+      jest.restoreAllMocks();
+    });
+
+    it('should catch errors if deleteMany fails', async () => {
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const error = new Error('Database connection failed');
+      mockDeleteMany.mockRejectedValueOnce(error);
+
+      await cleanupService.doHandleOldLogCleanupAsync();
+
+      expect(mockDeleteMany).toHaveBeenCalled();
+      expect(consoleSpy).toHaveBeenCalledWith(error);
+
+      consoleSpy.mockRestore();
+    });
+  });
 });

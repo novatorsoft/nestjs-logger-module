@@ -34,13 +34,15 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/mongoose": "^11.0.4",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/schedule": "^6.1.1",
     "mongoose": "^9.0.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
   "peerDependencies": {
+    "@nestjs/mongoose": "^11.0.4",
     "mongoose": "^9.0.2",
-    "@nestjs/mongoose": "^11.0.4"
+    "@nestjs/schedule": "^6.1.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

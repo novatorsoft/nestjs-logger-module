@@ -12,6 +12,8 @@ jest.mock('node:fs', () => ({
   existsSync: jest.fn(),
   mkdirSync: jest.fn(),
   appendFileSync: jest.fn(),
+  readdirSync: jest.fn(),
+  unlinkSync: jest.fn(),
 }));
 
 describe('FileService', () => {
@@ -25,6 +27,8 @@ describe('FileService', () => {
     (fsMock.existsSync as jest.Mock).mockReset();
     (fsMock.mkdirSync as jest.Mock).mockReset();
     (fsMock.appendFileSync as jest.Mock).mockReset();
+    (fsMock.readdirSync as jest.Mock).mockReset();
+    (fsMock.unlinkSync as jest.Mock).mockReset();
 
     const loggerConfig = MockFactory(FileConfigFixture).one();
 
@@ -329,6 +333,109 @@ describe('FileService', () => {
       };
       expect(parsed.stack).toBe('Fatal stack trace');
       expect(parsed.context).toBe('TestContext');
+    });
+  });
+
+  describe('doHandleOldLogCleanupAsync', () => {
+    const logsDir = path.join(process.cwd(), 'logs');
+    let cleanupService: FileService;
+
+    beforeEach(async () => {
+      const loggerConfig = MockFactory(FileConfigFixture).one();
+      loggerConfig.retentionDays = 7;
+
+      (fsMock.existsSync as jest.Mock).mockReturnValue(true);
+
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [
+          FileService,
+          { provide: LOGGER_CONFIG, useValue: loggerConfig },
+        ],
+      }).compile();
+
+      cleanupService = module.get<FileService>(FileService);
+    });
+
+    it('should delete log files older than retentionDays', async () => {
+      (fsMock.readdirSync as jest.Mock).mockReturnValue([
+        'log-2025-12-20.log',
+        'log-2025-12-25.log',
+        'log-2025-12-28.log',
+      ]);
+
+      await cleanupService['doHandleOldLogCleanupAsync']();
+
+      expect(fsMock.unlinkSync).toHaveBeenCalledTimes(1);
+      expect(fsMock.unlinkSync).toHaveBeenCalledWith(
+        path.join(logsDir, 'log-2025-12-20.log'),
+      );
+    });
+
+    it('should not delete log files within retentionDays', async () => {
+      (fsMock.readdirSync as jest.Mock).mockReturnValue([
+        'log-2025-12-25.log',
+        'log-2025-12-27.log',
+        'log-2025-12-28.log',
+      ]);
+
+      await cleanupService['doHandleOldLogCleanupAsync']();
+
+      expect(fsMock.unlinkSync).not.toHaveBeenCalled();
+    });
+
+    it('should skip files that do not match log pattern', async () => {
+      (fsMock.readdirSync as jest.Mock).mockReturnValue([
+        'readme.txt',
+        'log-2025-12-20.log',
+        'other-file.json',
+        '.gitkeep',
+      ]);
+
+      await cleanupService['doHandleOldLogCleanupAsync']();
+
+      expect(fsMock.unlinkSync).toHaveBeenCalledTimes(1);
+      expect(fsMock.unlinkSync).toHaveBeenCalledWith(
+        path.join(logsDir, 'log-2025-12-20.log'),
+      );
+    });
+
+    it('should delete multiple old log files', async () => {
+      (fsMock.readdirSync as jest.Mock).mockReturnValue([
+        'log-2025-12-10.log',
+        'log-2025-12-15.log',
+        'log-2025-12-19.log',
+        'log-2025-12-28.log',
+      ]);
+
+      await cleanupService['doHandleOldLogCleanupAsync']();
+
+      expect(fsMock.unlinkSync).toHaveBeenCalledTimes(3);
+      expect(fsMock.unlinkSync).toHaveBeenCalledWith(
+        path.join(logsDir, 'log-2025-12-10.log'),
+      );
+      expect(fsMock.unlinkSync).toHaveBeenCalledWith(
+        path.join(logsDir, 'log-2025-12-15.log'),
+      );
+      expect(fsMock.unlinkSync).toHaveBeenCalledWith(
+        path.join(logsDir, 'log-2025-12-19.log'),
+      );
+    });
+
+    it('should catch errors and log to console.error', async () => {
+      const consoleSpy = jest
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      const error = new Error('Permission denied');
+      (fsMock.readdirSync as jest.Mock).mockImplementation(() => {
+        throw error;
+      });
+
+      await cleanupService['doHandleOldLogCleanupAsync']();
+
+      expect(consoleSpy).toHaveBeenCalledWith(error);
+
+      consoleSpy.mockRestore();
     });
   });
 });

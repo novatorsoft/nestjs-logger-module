@@ -34,6 +34,10 @@ export class ConsoleService extends LoggerService {
     logger.warn(message);
   }
 
+  protected doHandleOldLogCleanupAsync(): Promise<void> {
+    return Promise.resolve();
+  }
+
   private getLogger(context?: string): Logger {
     return new Logger(context ?? 'LoggerService');
   }
