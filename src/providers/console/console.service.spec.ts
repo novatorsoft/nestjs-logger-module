@@ -152,11 +152,9 @@ describe('ConsoleService', () => {
     });
   });
 
-  describe('doHandleOldLogCleanupAsync', () => {
+  describe('handleOldLogCleanupAsync', () => {
     it('should resolve without doing anything', async () => {
-      await expect(
-        service['doHandleOldLogCleanupAsync'](),
-      ).resolves.toBeUndefined();
+      await expect(service.handleOldLogCleanupAsync()).resolves.toBeUndefined();
     });
   });
 });

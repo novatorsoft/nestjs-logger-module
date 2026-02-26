@@ -187,7 +187,7 @@ describe('MongoService', () => {
     });
   });
 
-  describe('doHandleOldLogCleanupAsync', () => {
+  describe('handleOldLogCleanupAsync', () => {
     let cleanupService: MongoService;
     const mockDeleteMany = jest.fn();
     const retentionDays = 7;
@@ -224,12 +224,11 @@ describe('MongoService', () => {
       const now = Date.now();
       jest.spyOn(Date, 'now').mockReturnValue(now);
       mockDeleteMany.mockResolvedValueOnce({ deletedCount: 5 });
-
-      await cleanupService.doHandleOldLogCleanupAsync();
-
       const expectedCutoffDate = new Date(
         now - retentionDays * 24 * 60 * 60 * 1000,
       );
+
+      await cleanupService.handleOldLogCleanupAsync(expectedCutoffDate);
 
       expect(mockDeleteMany).toHaveBeenCalledWith({
         timestamp: { $lt: expectedCutoffDate },
@@ -246,7 +245,7 @@ describe('MongoService', () => {
       const error = new Error('Database connection failed');
       mockDeleteMany.mockRejectedValueOnce(error);
 
-      await cleanupService.doHandleOldLogCleanupAsync();
+      await cleanupService.handleOldLogCleanupAsync(new Date());
 
       expect(mockDeleteMany).toHaveBeenCalled();
       expect(consoleSpy).toHaveBeenCalledWith(error);

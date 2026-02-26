@@ -4,7 +4,7 @@ import { LOGGER_CONFIG } from './config';
 import { LoggerService } from './logger.service';
 
 class TestLoggerService extends LoggerService {
-  doHandleOldLogCleanupAsync(): Promise<void> {
+  handleOldLogCleanupAsync(_: Date): Promise<void> {
     return Promise.resolve();
   }
   doDebug(): void {}
@@ -17,7 +17,6 @@ class TestLoggerService extends LoggerService {
 
 describe('LoggerService', () => {
   let service: TestLoggerService;
-  let doHandleOldLogCleanupSpy: jest.SpyInstance;
   let doDebugSpy: jest.SpyInstance;
   let doLogSpy: jest.SpyInstance;
   let doErrorSpy: jest.SpyInstance;
@@ -38,10 +37,6 @@ describe('LoggerService', () => {
       }).compile();
 
       service = module.get<TestLoggerService>(TestLoggerService);
-      doHandleOldLogCleanupSpy = jest.spyOn(
-        service,
-        'doHandleOldLogCleanupAsync',
-      );
       doDebugSpy = jest.spyOn(service, 'doDebug');
       doLogSpy = jest.spyOn(service, 'doLog');
       doErrorSpy = jest.spyOn(service, 'doError');
@@ -52,21 +47,6 @@ describe('LoggerService', () => {
 
     it('should be defined', () => {
       expect(service).toBeDefined();
-    });
-
-    describe('handleOldLogCleanup', () => {
-      it('should not call doHandleOldLogCleanup when retentionDays is not set', () => {
-        service['handleOldLogCleanupAsync']();
-        expect(doHandleOldLogCleanupSpy).not.toHaveBeenCalled();
-      });
-    });
-
-    describe('getCutoffDate', () => {
-      it('should throw error when retentionDays is not set', () => {
-        expect(() => service['getCutoffDate']()).toThrow(
-          'Retention days must be greater than 0',
-        );
-      });
     });
 
     describe('debug', () => {
@@ -189,10 +169,6 @@ describe('LoggerService', () => {
       }).compile();
 
       service = module.get<TestLoggerService>(TestLoggerService);
-      doHandleOldLogCleanupSpy = jest.spyOn(
-        service,
-        'doHandleOldLogCleanupAsync',
-      );
       doDebugSpy = jest.spyOn(service, 'doDebug');
       doLogSpy = jest.spyOn(service, 'doLog');
       doErrorSpy = jest.spyOn(service, 'doError');
@@ -203,18 +179,6 @@ describe('LoggerService', () => {
 
     it('should be defined', () => {
       expect(service).toBeDefined();
-    });
-
-    describe('handleOldLogCleanup', () => {
-      it('should not call doHandleOldLogCleanup when logger is disabled', () => {
-        service['handleOldLogCleanupAsync']();
-        expect(doHandleOldLogCleanupSpy).not.toHaveBeenCalled();
-      });
-
-      it('should not call doHandleOldLogCleanup when logger is disabled even with retentionDays', () => {
-        service['handleOldLogCleanupAsync']();
-        expect(doHandleOldLogCleanupSpy).not.toHaveBeenCalled();
-      });
     });
 
     describe('debug', () => {
@@ -328,10 +292,6 @@ describe('LoggerService', () => {
       }).compile();
 
       service = module.get<TestLoggerService>(TestLoggerService);
-      doHandleOldLogCleanupSpy = jest.spyOn(
-        service,
-        'doHandleOldLogCleanupAsync',
-      );
       doDebugSpy = jest.spyOn(service, 'doDebug');
       doLogSpy = jest.spyOn(service, 'doLog');
       doErrorSpy = jest.spyOn(service, 'doError');
@@ -340,174 +300,34 @@ describe('LoggerService', () => {
       doWarnSpy = jest.spyOn(service, 'doWarn');
     });
 
-    it('should not call doHandleOldLogCleanup when retentionDays is not set', () => {
-      service['handleOldLogCleanupAsync']();
-      expect(doHandleOldLogCleanupSpy).not.toHaveBeenCalled();
-    });
-
-    it('should not call doDebug when enabled is undefined', () => {
+    it('should call doDebug when enabled is undefined', () => {
       service.debug('test message');
       expect(doDebugSpy).toHaveBeenCalled();
     });
 
-    it('should not call doLog when enabled is undefined', () => {
+    it('should call doLog when enabled is undefined', () => {
       service.log('test message');
       expect(doLogSpy).toHaveBeenCalled();
     });
 
-    it('should not call doError when enabled is undefined', () => {
+    it('should call doError when enabled is undefined', () => {
       service.error('test message');
       expect(doErrorSpy).toHaveBeenCalled();
     });
 
-    it('should not call doFatal when enabled is undefined', () => {
+    it('should call doFatal when enabled is undefined', () => {
       service.fatal('test message');
       expect(doFatalSpy).toHaveBeenCalled();
     });
 
-    it('should not call doVerbose when enabled is undefined', () => {
+    it('should call doVerbose when enabled is undefined', () => {
       service.verbose('test message');
       expect(doVerboseSpy).toHaveBeenCalled();
     });
 
-    it('should not call doWarn when enabled is undefined', () => {
+    it('should call doWarn when enabled is undefined', () => {
       service.warn('test message');
       expect(doWarnSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('when logger is enabled and retentionDays is set', () => {
-    beforeEach(async () => {
-      const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          TestLoggerService,
-          {
-            provide: LOGGER_CONFIG,
-            useValue: { enabled: true, retentionDays: 7 },
-          },
-        ],
-      }).compile();
-
-      service = module.get<TestLoggerService>(TestLoggerService);
-      doHandleOldLogCleanupSpy = jest.spyOn(
-        service,
-        'doHandleOldLogCleanupAsync',
-      );
-    });
-
-    it('should call doHandleOldLogCleanup when retentionDays is set', () => {
-      service['handleOldLogCleanupAsync']();
-      expect(doHandleOldLogCleanupSpy).toHaveBeenCalled();
-    });
-
-    describe('getCutoffDate', () => {
-      it('should return a Date object', () => {
-        const result = service['getCutoffDate']();
-        expect(result).toBeInstanceOf(Date);
-      });
-
-      it('should return a date that is retentionDays ago', () => {
-        const now = Date.now();
-        jest.spyOn(Date, 'now').mockReturnValue(now);
-
-        const result = service['getCutoffDate']();
-        const expected = new Date(now - 7 * 24 * 60 * 60 * 1000);
-
-        expect(result.getTime()).toBe(expected.getTime());
-
-        jest.restoreAllMocks();
-      });
-    });
-  });
-
-  describe('when logger is enabled and retentionDays is 0', () => {
-    beforeEach(async () => {
-      const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          TestLoggerService,
-          {
-            provide: LOGGER_CONFIG,
-            useValue: { enabled: true, retentionDays: 0 },
-          },
-        ],
-      }).compile();
-
-      service = module.get<TestLoggerService>(TestLoggerService);
-      doHandleOldLogCleanupSpy = jest.spyOn(
-        service,
-        'doHandleOldLogCleanupAsync',
-      );
-    });
-
-    it('should not call doHandleOldLogCleanup when retentionDays is 0', () => {
-      service['handleOldLogCleanupAsync']();
-      expect(doHandleOldLogCleanupSpy).not.toHaveBeenCalled();
-    });
-
-    describe('getCutoffDate', () => {
-      it('should throw error when retentionDays is 0', () => {
-        expect(() => service['getCutoffDate']()).toThrow(
-          'Retention days must be greater than 0',
-        );
-      });
-    });
-  });
-
-  describe('when logger is enabled and retentionDays is negative', () => {
-    beforeEach(async () => {
-      const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          TestLoggerService,
-          {
-            provide: LOGGER_CONFIG,
-            useValue: { enabled: true, retentionDays: -1 },
-          },
-        ],
-      }).compile();
-
-      service = module.get<TestLoggerService>(TestLoggerService);
-      doHandleOldLogCleanupSpy = jest.spyOn(
-        service,
-        'doHandleOldLogCleanupAsync',
-      );
-    });
-
-    it('should not call doHandleOldLogCleanup when retentionDays is negative', () => {
-      service['handleOldLogCleanupAsync']();
-      expect(doHandleOldLogCleanupSpy).not.toHaveBeenCalled();
-    });
-
-    describe('getCutoffDate', () => {
-      it('should throw error when retentionDays is negative', () => {
-        expect(() => service['getCutoffDate']()).toThrow(
-          'Retention days must be greater than 0',
-        );
-      });
-    });
-  });
-
-  describe('when logger is disabled and retentionDays is set', () => {
-    beforeEach(async () => {
-      const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          TestLoggerService,
-          {
-            provide: LOGGER_CONFIG,
-            useValue: { enabled: false, retentionDays: 7 },
-          },
-        ],
-      }).compile();
-
-      service = module.get<TestLoggerService>(TestLoggerService);
-      doHandleOldLogCleanupSpy = jest.spyOn(
-        service,
-        'doHandleOldLogCleanupAsync',
-      );
-    });
-
-    it('should not call doHandleOldLogCleanup when logger is disabled', () => {
-      service['handleOldLogCleanupAsync']();
-      expect(doHandleOldLogCleanupSpy).not.toHaveBeenCalled();
     });
   });
 });

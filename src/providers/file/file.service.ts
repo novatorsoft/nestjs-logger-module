@@ -45,9 +45,8 @@ export class FileService extends LoggerService {
     this.writeToFile(logMessage);
   }
 
-  protected doHandleOldLogCleanupAsync(): Promise<void> {
+  handleOldLogCleanupAsync(cutoffDate: Date): Promise<void> {
     try {
-      const cutoffDate = this.getCutoffDate();
       const files = fs.readdirSync(this.logsDir);
       const logFilePattern = /^log-(\d{4})-(\d{2})-(\d{2})\.log$/;
 

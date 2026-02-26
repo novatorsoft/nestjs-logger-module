@@ -34,7 +34,7 @@ export class ConsoleService extends LoggerService {
     logger.warn(message);
   }
 
-  protected doHandleOldLogCleanupAsync(): Promise<void> {
+  handleOldLogCleanupAsync(): Promise<void> {
     return Promise.resolve();
   }
 

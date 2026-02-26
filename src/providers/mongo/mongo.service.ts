@@ -39,10 +39,10 @@ export class MongoService extends LoggerService {
     void this.insertLog('WARN', message, context);
   }
 
-  async doHandleOldLogCleanupAsync(): Promise<void> {
+  async handleOldLogCleanupAsync(cutoffDate: Date): Promise<void> {
     try {
       await this.logModel.deleteMany({
-        timestamp: { $lt: this.getCutoffDate() },
+        timestamp: { $lt: cutoffDate },
       });
     } catch (error) {
       console.error(error);

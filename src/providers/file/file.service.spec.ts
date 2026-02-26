@@ -336,34 +336,18 @@ describe('FileService', () => {
     });
   });
 
-  describe('doHandleOldLogCleanupAsync', () => {
+  describe('handleOldLogCleanupAsync', () => {
     const logsDir = path.join(process.cwd(), 'logs');
-    let cleanupService: FileService;
+    const cutoffDate = new Date(2025, 11, 22);
 
-    beforeEach(async () => {
-      const loggerConfig = MockFactory(FileConfigFixture).one();
-      loggerConfig.retentionDays = 7;
-
-      (fsMock.existsSync as jest.Mock).mockReturnValue(true);
-
-      const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          FileService,
-          { provide: LOGGER_CONFIG, useValue: loggerConfig },
-        ],
-      }).compile();
-
-      cleanupService = module.get<FileService>(FileService);
-    });
-
-    it('should delete log files older than retentionDays', async () => {
+    it('should delete log files older than cutoffDate', async () => {
       (fsMock.readdirSync as jest.Mock).mockReturnValue([
         'log-2025-12-20.log',
         'log-2025-12-25.log',
         'log-2025-12-28.log',
       ]);
 
-      await cleanupService['doHandleOldLogCleanupAsync']();
+      await service.handleOldLogCleanupAsync(cutoffDate);
 
       expect(fsMock.unlinkSync).toHaveBeenCalledTimes(1);
       expect(fsMock.unlinkSync).toHaveBeenCalledWith(
@@ -371,14 +355,14 @@ describe('FileService', () => {
       );
     });
 
-    it('should not delete log files within retentionDays', async () => {
+    it('should not delete log files newer than cutoffDate', async () => {
       (fsMock.readdirSync as jest.Mock).mockReturnValue([
         'log-2025-12-25.log',
         'log-2025-12-27.log',
         'log-2025-12-28.log',
       ]);
 
-      await cleanupService['doHandleOldLogCleanupAsync']();
+      await service.handleOldLogCleanupAsync(cutoffDate);
 
       expect(fsMock.unlinkSync).not.toHaveBeenCalled();
     });
@@ -391,7 +375,7 @@ describe('FileService', () => {
         '.gitkeep',
       ]);
 
-      await cleanupService['doHandleOldLogCleanupAsync']();
+      await service.handleOldLogCleanupAsync(cutoffDate);
 
       expect(fsMock.unlinkSync).toHaveBeenCalledTimes(1);
       expect(fsMock.unlinkSync).toHaveBeenCalledWith(
@@ -407,7 +391,7 @@ describe('FileService', () => {
         'log-2025-12-28.log',
       ]);
 
-      await cleanupService['doHandleOldLogCleanupAsync']();
+      await service.handleOldLogCleanupAsync(cutoffDate);
 
       expect(fsMock.unlinkSync).toHaveBeenCalledTimes(3);
       expect(fsMock.unlinkSync).toHaveBeenCalledWith(
@@ -431,7 +415,7 @@ describe('FileService', () => {
         throw error;
       });
 
-      await cleanupService['doHandleOldLogCleanupAsync']();
+      await service.handleOldLogCleanupAsync(cutoffDate);
 
       expect(consoleSpy).toHaveBeenCalledWith(error);
 

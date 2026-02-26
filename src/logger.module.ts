@@ -8,11 +8,11 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { LOGGER_CONFIG, LoggerAsyncConfig, LoggerConfigType } from './config';
 import { Log, LogSchema } from './providers/mongo/log.scheme';
 
+import { LogCleanupService } from './log-cleanup.service';
 import { LoggerConfigModule } from './logger-config.module';
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({})
 export class LoggerModule {
@@ -27,10 +27,9 @@ export class LoggerModule {
       global: config?.isGlobal ?? false,
       imports: [
         ...loggerModuleConfig.imports,
-        ScheduleModule.forRoot(),
         LoggerConfigModule.register(config),
       ],
-      providers: loggerModuleConfig.provider,
+      providers: [...loggerModuleConfig.provider, LogCleanupService],
       exports: [LoggerService],
     };
   }
@@ -47,10 +46,9 @@ export class LoggerModule {
       imports: [
         ...(config.imports ?? []),
         ...loggerModuleConfig.imports,
-        ScheduleModule.forRoot(),
         LoggerConfigModule.register(config),
       ],
-      providers: loggerModuleConfig.provider,
+      providers: [...loggerModuleConfig.provider, LogCleanupService],
       exports: [LoggerService],
     };
   }
