@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.1](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.5.0...v1.5.1) (2026-02-26)
+
+### Bug Fixes
+
+* refactor log cleanup functionality in LoggerService and related services ([c18df04](https://github.com/novatorsoft/nestjs-logger-module/commit/c18df043c1cf83b93fdbf1950ca4fac9076665ad))
+
 ## [1.5.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.4.0...v1.5.0) (2026-02-26)
 
 ### Features
