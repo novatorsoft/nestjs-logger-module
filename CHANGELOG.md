@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.4.0...v1.5.0) (2026-02-26)
+
+### Features
+
+* integrate @nestjs/schedule for log cleanup and enhance retention management ([bea0690](https://github.com/novatorsoft/nestjs-logger-module/commit/bea06907b4d368fb76f65c32a0952f2d8c6d0000))
+
 ## [1.4.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.3.0...v1.4.0) (2026-01-02)
 
 ### Features
