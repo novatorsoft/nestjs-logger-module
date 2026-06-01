@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.6.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.5.1...v1.6.0) (2026-06-01)
+
+### Features
+
+* enhance LoggerModule with MongoDB integration and testing utilities ([0efb22b](https://github.com/novatorsoft/nestjs-logger-module/commit/0efb22b9f5b2bb87f6457603d200d27f59c3253d))
+
 ## [1.5.1](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.5.0...v1.5.1) (2026-02-26)
 
 ### Bug Fixes
