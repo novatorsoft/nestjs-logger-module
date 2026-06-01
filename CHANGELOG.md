@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.6.1](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.6.0...v1.6.1) (2026-06-01)
+
+### Bug Fixes
+
+* update default collection name in LoggerModule to "logs" ([2cff09e](https://github.com/novatorsoft/nestjs-logger-module/commit/2cff09e9e2a3d7de358d4da0da257b21228f5cb5))
+
 ## [1.6.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.5.1...v1.6.0) (2026-06-01)
 
 ### Features
