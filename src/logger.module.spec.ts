@@ -219,7 +219,7 @@ describe('LoggerModule', () => {
         ['register', registerMongoModule],
         ['registerAsync', registerMongoModuleAsync],
       ])(
-        'should default collection to "logger" when schemaName is omitted (%s)',
+        'should default collection to "logs" when schemaName is omitted (%s)',
         (_, registerModule) => {
           const mongoConfig = MockFactory(MongoConfigFixture).one();
           delete mongoConfig.schemaName;
@@ -230,7 +230,7 @@ describe('LoggerModule', () => {
 
           runLogModelFactory(modelProvider, connection, mongoConfig);
 
-          expect(modelMock).toHaveBeenCalledWith(Log.name, LogSchema, 'logger');
+          expect(modelMock).toHaveBeenCalledWith(Log.name, LogSchema, 'logs');
         },
       );
     });

@@ -92,7 +92,7 @@ export class LoggerModule {
             connection.model(
               Log.name,
               LogSchema,
-              loggerConfig?.schemaName ?? 'logger',
+              loggerConfig?.schemaName ?? 'logs',
             ),
           inject: [getConnectionToken(), LOGGER_CONFIG],
         },
