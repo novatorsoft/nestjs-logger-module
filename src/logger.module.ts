@@ -7,12 +7,17 @@ import {
 import { DynamicModule, Module } from '@nestjs/common';
 import { LOGGER_CONFIG, LoggerAsyncConfig, LoggerConfigType } from './config';
 import { Log, LogSchema } from './providers/mongo/log.scheme';
+import {
+  MongooseModule,
+  getConnectionToken,
+  getModelToken,
+} from '@nestjs/mongoose';
 
+import { Connection } from 'mongoose';
 import { LogCleanupService } from './log-cleanup.service';
 import { LoggerConfigModule } from './logger-config.module';
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
-import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({})
 export class LoggerModule {
@@ -81,6 +86,16 @@ export class LoggerModule {
           provide: LoggerService,
           useClass: MongoService,
         },
+        {
+          provide: getModelToken(Log.name),
+          useFactory: (connection: Connection, loggerConfig: MongoConfig) =>
+            connection.model(
+              Log.name,
+              LogSchema,
+              loggerConfig?.schemaName ?? 'logger',
+            ),
+          inject: [getConnectionToken(), LOGGER_CONFIG],
+        },
       ],
       imports: [
         loggerConfigModule,
@@ -93,7 +108,6 @@ export class LoggerModule {
           },
           inject: [LOGGER_CONFIG],
         }),
-        MongooseModule.forFeature([{ name: Log.name, schema: LogSchema }]),
       ],
     };
   }
