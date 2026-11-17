@@ -18,6 +18,7 @@ import { LogCleanupService } from './log-cleanup.service';
 import { LoggerConfigModule } from './logger-config.module';
 import { LoggerProvider } from './enum';
 import { LoggerService } from './logger.service';
+import { MaskService } from './masking';
 
 @Module({})
 export class LoggerModule {
@@ -34,7 +35,11 @@ export class LoggerModule {
         ...loggerModuleConfig.imports,
         LoggerConfigModule.register(config),
       ],
-      providers: [...loggerModuleConfig.provider, LogCleanupService],
+      providers: [
+        ...loggerModuleConfig.provider,
+        MaskService,
+        LogCleanupService,
+      ],
       exports: [LoggerService],
     };
   }
@@ -53,7 +58,11 @@ export class LoggerModule {
         ...loggerModuleConfig.imports,
         LoggerConfigModule.register(config),
       ],
-      providers: [...loggerModuleConfig.provider, LogCleanupService],
+      providers: [
+        ...loggerModuleConfig.provider,
+        MaskService,
+        LogCleanupService,
+      ],
       exports: [LoggerService],
     };
   }

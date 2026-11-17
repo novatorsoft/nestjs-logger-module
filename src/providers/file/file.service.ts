@@ -5,13 +5,17 @@ import { Inject, Injectable } from '@nestjs/common';
 import { LoggerService } from '../../logger.service';
 import { LOGGER_CONFIG } from '../../config';
 import { FileConfig } from './file.config';
+import { MaskService } from '../../masking';
 
 @Injectable()
 export class FileService extends LoggerService {
   private readonly logsDir = path.join(process.cwd(), 'logs');
 
-  constructor(@Inject(LOGGER_CONFIG) private readonly fileConfig: FileConfig) {
-    super(fileConfig);
+  constructor(
+    @Inject(LOGGER_CONFIG) private readonly fileConfig: FileConfig,
+    maskService: MaskService,
+  ) {
+    super(fileConfig, maskService);
     this.ensureLogsDirectory();
   }
 

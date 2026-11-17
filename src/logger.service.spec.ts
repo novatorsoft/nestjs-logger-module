@@ -1,3 +1,4 @@
+import { MaskService } from './masking';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { LOGGER_CONFIG } from './config';
@@ -28,6 +29,7 @@ describe('LoggerService', () => {
     beforeEach(async () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
+          MaskService,
           TestLoggerService,
           {
             provide: LOGGER_CONFIG,
@@ -160,6 +162,7 @@ describe('LoggerService', () => {
     beforeEach(async () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
+          MaskService,
           TestLoggerService,
           {
             provide: LOGGER_CONFIG,
@@ -283,6 +286,7 @@ describe('LoggerService', () => {
     beforeEach(async () => {
       const module: TestingModule = await Test.createTestingModule({
         providers: [
+          MaskService,
           TestLoggerService,
           {
             provide: LOGGER_CONFIG,

@@ -6,4 +6,5 @@ export class LoggerConfig {
   enabled?: boolean;
   serviceName?: string;
   retentionDays?: number;
+  maskedKeys?: string[];
 }

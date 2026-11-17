@@ -5,14 +5,16 @@ import { MongoConfig } from './mongo.config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Log } from './log.scheme';
 import { Model } from 'mongoose';
+import { MaskService } from '../../masking';
 
 @Injectable()
 export class MongoService extends LoggerService {
   constructor(
     @Inject(LOGGER_CONFIG) private readonly mongoConfig: MongoConfig,
     @InjectModel(Log.name) private readonly logModel: Model<Log>,
+    maskService: MaskService,
   ) {
-    super(mongoConfig);
+    super(mongoConfig, maskService);
   }
 
   doDebug(message: any, context?: string): void {

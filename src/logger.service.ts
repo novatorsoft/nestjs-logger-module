@@ -1,38 +1,45 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { LOGGER_CONFIG, LoggerConfig } from './config';
+import { MaskService } from './masking';
 
 @Injectable()
 export abstract class LoggerService {
   private readonly enabledLogger: boolean;
   constructor(
     @Inject(LOGGER_CONFIG) private readonly loggerConfig: LoggerConfig,
+    protected readonly maskService: MaskService,
   ) {
     this.enabledLogger =
       this.loggerConfig.enabled === undefined || this.loggerConfig.enabled;
   }
 
   debug(message: any, context?: string): void {
-    if (this.enabledLogger) this.doDebug(message, context);
+    if (this.enabledLogger)
+      this.doDebug(this.maskService.mask(message), context);
   }
 
   log(message: any, context?: string): void {
-    if (this.enabledLogger) this.doLog(message, context);
+    if (this.enabledLogger) this.doLog(this.maskService.mask(message), context);
   }
 
   error(message: any, stack?: string, context?: string): void {
-    if (this.enabledLogger) this.doError(message, stack, context);
+    if (this.enabledLogger)
+      this.doError(this.maskService.mask(message), stack, context);
   }
 
   fatal(message: any, stack?: string, context?: string): void {
-    if (this.enabledLogger) this.doFatal(message, stack, context);
+    if (this.enabledLogger)
+      this.doFatal(this.maskService.mask(message), stack, context);
   }
 
   verbose(message: any, context?: string): void {
-    if (this.enabledLogger) this.doVerbose(message, context);
+    if (this.enabledLogger)
+      this.doVerbose(this.maskService.mask(message), context);
   }
 
   warn(message: any, context?: string): void {
-    if (this.enabledLogger) this.doWarn(message, context);
+    if (this.enabledLogger)
+      this.doWarn(this.maskService.mask(message), context);
   }
 
   abstract handleOldLogCleanupAsync(cutoffDate: Date): Promise<void>;

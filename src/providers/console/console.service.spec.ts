@@ -1,3 +1,4 @@
+import { MaskService } from '../../masking';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { ConsoleConfigFixture } from '../../../test/fixtures';
@@ -21,6 +22,7 @@ describe('ConsoleService', () => {
     const loggerConfig = MockFactory(ConsoleConfigFixture).one();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        MaskService,
         ConsoleService,
         { provide: LOGGER_CONFIG, useValue: loggerConfig },
       ],

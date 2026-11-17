@@ -1,3 +1,4 @@
+import { MaskService } from '../../masking';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { LOGGER_CONFIG } from '../../config';
@@ -15,6 +16,7 @@ describe('MongoService', () => {
     const mongoConfig = MockFactory(MongoConfigFixture).one();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        MaskService,
         MongoService,
         {
           provide: LOGGER_CONFIG,
@@ -58,6 +60,7 @@ describe('MongoService', () => {
 
       const modulePromise = Test.createTestingModule({
         providers: [
+          MaskService,
           MongoService,
           { provide: LOGGER_CONFIG, useValue: loggerConfig },
           {
@@ -198,6 +201,7 @@ describe('MongoService', () => {
 
       const module: TestingModule = await Test.createTestingModule({
         providers: [
+          MaskService,
           MongoService,
           {
             provide: LOGGER_CONFIG,

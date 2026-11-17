@@ -1,3 +1,4 @@
+import { MaskService } from '../../masking';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -36,6 +37,7 @@ describe('FileService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        MaskService,
         FileService,
         { provide: LOGGER_CONFIG, useValue: loggerConfig },
       ],
@@ -71,6 +73,7 @@ describe('FileService', () => {
       const loggerConfig = MockFactory(FileConfigFixture).one();
       const module: TestingModule = await Test.createTestingModule({
         providers: [
+          MaskService,
           FileService,
           { provide: LOGGER_CONFIG, useValue: loggerConfig },
         ],
@@ -136,6 +139,7 @@ describe('FileService', () => {
 
       const module: TestingModule = await Test.createTestingModule({
         providers: [
+          MaskService,
           FileService,
           { provide: LOGGER_CONFIG, useValue: loggerConfig },
         ],
