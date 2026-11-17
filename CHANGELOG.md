@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.7.0](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.6.1...v1.7.0) (2026-11-17)
+
+### Features
+
+* introduce MaskService for sensitive data masking in LoggerModule ([4cb220c](https://github.com/novatorsoft/nestjs-logger-module/commit/4cb220cae68be414b506ecbf58771c49c48248e2))
+
 ## [1.6.1](https://github.com/novatorsoft/nestjs-logger-module/compare/v1.6.0...v1.6.1) (2026-06-01)
 
 ### Bug Fixes
